@@ -1,0 +1,6 @@
+<!-- global_planning-->
+<launch>
+
+    <node pkg="global_planning" type="global_plan_client.py" name="global_plan_client" output="screen"/>   
+ 
+</launch>

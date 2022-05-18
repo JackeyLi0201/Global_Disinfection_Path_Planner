@@ -1,0 +1,30 @@
+#Algorithm selection: 1 to represent the A* with NN sorting; 2 represents the improved A* with NN sorting; 3 is the A* without NN sorting 算法选择  1代表排序后的A*; 2代表排序后的改进A*; 3代表未排序的A*
+alghrithom_number: 1
+#Generated path file directory 生成的路径文件目录
+path_file: "/home/auv/catkin_points/src/follow_waypoints-master/saved_path/pose.csv"
+#.Pgm Map file directory 地图.pgm文件所在目录
+map_file: "/home/auv/catkin_points/src/clean_spot_gen/mapfiles/jackal_race.pgm"
+#Yaml Map file directory 地图.yaml文件所在目录
+map_yaml: "/home/auv/catkin_points/src/clean_spot_gen/mapfiles/jackal_race.yaml"
+#The directory where the disinfection points' files are located 消毒点文件所在目录
+disinfect_point_file: "/home/auv/桌面/default_file_name.txt"
+#The first algorithm parameter 第一种算法参数
+#Parameters used to generate swelling obstacles can be adjusted according to the actual map conditions 用于生成膨胀障碍物的参数，可根据地图实际情况调整
+robot_size_1: 5
+safe_distance_1: 11
+#Used to calculate path angles 用于计算路径角度
+angle_jiange_1: 18
+#The second algorithm parameter 第二种算法参数
+#Parameters used to generate swelling obstacles can be adjusted according to the actual map conditions 用于生成膨胀障碍物的参数，可根据地图实际情况调整
+robot_size_2: 5
+safe_distance_2: 11
+#Used to calculate path angles 用于计算路径角度
+angle_jiange_2: 20
+#The third algorithm parameter 第三种算法参数
+#Parameters used to generate swelling obstacles can be adjusted according to the actual map conditions 用于生成膨胀障碍物的参数，可根据地图实际情况调整
+robot_size_3: 5
+safe_distance_3: 11
+#Used to calculate path angles 用于计算路径角度
+angle_jiange_3: 18
+
+

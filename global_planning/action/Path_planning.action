@@ -1,0 +1,8 @@
+#algorithm selection
+int32 algo_index
+---
+#result path
+nav_msgs/Path outputPath
+---
+#feedback
+string fb_msg
