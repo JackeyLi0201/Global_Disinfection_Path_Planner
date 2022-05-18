@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+  <!--this file call a simulation env to explore a new world with rtab to build a map and navigate-->
+<launch>
+  <include file="$(find slam_bot)/launch/robot_description.xml"/>
+  <arg name="world" default="empty"/> 
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!--arg name="world_name" value="$(find slam_bot)/worlds/jackal_race.world"/-->
+	<!--arg name="world_name" value="$(find slam_bot)/worlds/willowgarage.world"/-->
+	<arg name="world_name" value="$(find slam_bot)/worlds/office_env_large.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+  <!--Add map server -->
+  <!--arg name="map_file" default="$(find slam_bot)/maps/jackal_race.yaml"/
+  <arg name="map_file" default="$(find slam_bot)/maps/willow-garage-1.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />   
+  -->
+  <!--spawn a robot in gazebo world-->
+  <arg name="x" default="5"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="0.4"/>
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" 
+     output="screen" args="  -x $(arg x) -y $(arg y) -z $(arg z) -urdf -param robot_description -model slam_bot"/>
+	
+	<!-- Extended Kalman filter for data fusion  -->
+	<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+	  <param name="output_frame" value="odom_combined"/>
+	  <param name="base_footprint_frame" value="base_footprint"/>
+	  <param name="freq" value="30.0"/>
+	  <param name="sensor_timeout" value="1.0"/>  
+	  <param name="odom_used" value="true"/>
+	  <param name="imu_used" value="true"/>
+	  <param name="vo_used" value="false"/>
+	  <param name="debug" value="true"/>
+	  <remap from="imu_data" to="imu" />
+	</node>
+
+  <!--Localization package-->
+  <arg name="scan_topic"  default="scan" />
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+	<remap from="/scan" to="/slam_bot/laser/scan"/>
+	<param name="base_frame" value="base_footprint"/>
+	<param name="odom_frame" value="odom"/>
+	<param name="map_frame"  value="map"/>
+    <param name="map_update_interval" value="5.0"/>
+    <param name="maxUrange" value="20.0"/>   <!-- 6.0 -->
+    <param name="maxRange" value="30.0"/>    <!-- 8.0 -->
+    <param name="sigma" value="0.05"/>
+    <param name="kernelSize" value="1"/>
+    <param name="lstep" value="0.05"/>
+    <param name="astep" value="0.05"/>
+    <param name="iterations" value="5"/>
+    <param name="lsigma" value="0.075"/>
+    <param name="ogain" value="3.0"/>
+    <param name="lskip" value="0"/>
+    <param name="minimumScore" value="200"/>
+    <param name="srr" value="0.01"/>
+    <param name="srt" value="0.02"/>
+    <param name="str" value="0.01"/>
+    <param name="stt" value="0.02"/>
+    <param name="linearUpdate" value="0.5"/>
+    <param name="angularUpdate" value="0.436"/>
+    <param name="temporalUpdate" value="-1.0"/>
+    <param name="resampleThreshold" value="0.5"/>
+    <param name="particles" value="80"/>
+    <param name="xmin" value="-1.0"/>
+    <param name="ymin" value="-1.0"/>
+    <param name="xmax" value="1.0"/>
+    <param name="ymax" value="1.0"/>
+    <param name="delta" value="0.05"/>
+    <param name="llsamplerange" value="0.01"/>
+    <param name="llsamplestep" value="0.01"/>
+    <param name="lasamplerange" value="0.005"/>
+    <param name="lasamplestep" value="0.005"/>
+  </node>
+  <!--Call a move base to control the chasis to move-->
+
+   <include file="$(find slam_bot)/launch/tebmovebase.launch"/>
+
+  <!-- Arguments for launch file with defaults provided -->
+  <!--remap from="slam_bot/laser/scan" to="scan"/-->
+  <!--remap from="/slam_bot/laser/scan" to="scan"/-->
+  <arg name="rgb_topic"   default="/camera/rgb/image_raw"/>
+  <arg name="depth_topic" default="/camera/depth/image_raw"/>
+  <arg name="camera_info_topic" default="/camera/rgb/camera_info"/>  
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find slam_bot)/launch/config/robot_slam.rviz"/>
+
+</launch>

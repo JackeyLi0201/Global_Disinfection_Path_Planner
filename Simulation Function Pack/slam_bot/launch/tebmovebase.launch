@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
+    <rosparam file="$(find slam_bot)/config/teb/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find slam_bot)/config/teb/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find slam_bot)/config/teb/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find slam_bot)/config/teb/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find slam_bot)/config/teb/teb_base_global_planner_param.yaml" command="load" />
+
+    <rosparam file="$(find slam_bot)/config/teb/teb_local_planner_params.yaml" command="load" />
+
+    <remap from="cmd_vel" to="/cmd_vel"/>
+    <remap from="odom" to="/odom"/>
+    <remap from="scan" to="/slam_bot/laser/scan"/>
+
+     <param name="base_global_planner" value="global_planner/GlobalPlanner"/> 
+     <param name="planner_frequency" value="1.0" />
+     <param name="planner_patience" value="5.0" />
+
+     <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+     <param name="controller_frequency" value="5.0" />
+     <param name="controller_patience" value="15.0" />
+
+    <!--GD added to reduce stuck situation, will increase the chances of dropping a hard to reach goal-->
+      <param name="oscillation_timeout" value="5.0" />
+      <param name="oscillation_distance:" value="0.5" />
+
+  </node>
+  
+</launch>

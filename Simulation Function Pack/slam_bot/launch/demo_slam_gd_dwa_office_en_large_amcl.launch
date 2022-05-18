@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+  <!--this file call a simulation env to explore a new world with rtab to build a map and navigate-->
+<launch>
+  <include file="$(find slam_bot)/launch/robot_description.xml"/>
+  <arg name="world" default="empty"/> 
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!--arg name="world_name" value="$(find slam_bot)/worlds/jackal_race.world"/-->
+	<arg name="world_name" value="$(find slam_bot)/worlds/office_en_large.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+  <!--Add map server -->
+  <!--arg name="map_file" default="$(find slam_bot)/maps/jackal_race.yaml"/-->
+  <arg name="map_file" default="$(find slam_bot)/maps/office_en_large.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />   
+  <!--spawn a robot in gazebo world-->
+  <arg name="x" default="5"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="0.4"/>
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" 
+     output="screen" args="  -x $(arg x) -y $(arg y) -z $(arg z) -urdf -param robot_description -model slam_bot"/>
+
+  <!-- Localization	-->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <param name="initial_pose_x"  value="5"/>
+    <param name="initial_pose_y"  value="0"/>
+    <param name="initial_pose_a"  value="0.4"/>
+    <remap from="scan" to="/slam_bot/laser/scan"/>
+    <param name="odom_frame_id" value="odom"/>
+    <param name="odom_model_type" value="diff-corrected"/>
+    <param name="base_frame_id" value="base_footprint"/>
+    <param name="global_frame_id" value="map"/>
+  </node>
+
+  <!--Call a move base to control the chasis to move-->
+
+   <include file="$(find slam_bot)/launch/dwamovebase.launch"/>
+
+  <!-- Arguments for launch file with defaults provided -->
+  <arg name="database_path"     default="rtabmap.db"/>
+  <arg name="rgb_topic"   default="/camera/rgb/image_raw"/>
+  <arg name="depth_topic" default="/camera/depth/image_raw"/>
+  <arg name="camera_info_topic" default="/camera/rgb/camera_info"/>  
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find slam_bot)/launch/config/robot_slam.rviz"/>
+
+</launch>

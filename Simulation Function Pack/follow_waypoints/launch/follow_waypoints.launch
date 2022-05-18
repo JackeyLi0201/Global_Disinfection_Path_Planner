@@ -1,0 +1,34 @@
+<launch>
+  <env name="ROSCONSOLE_FORMAT" value="[${severity}][${thread}][${node}/${function}:${line}]: ${message}"/>
+
+ <arg name="addpose_topic" default="/goal"/>
+ <arg name="posearray_topic" default="/waypoints"/>
+ <arg name="smooth_tolerance" default= "0.8"/> 
+ <arg name="deviation_tolerance" default= "0.5"/> 
+ <arg name="odom_topic" default= "/odom"/> 
+ <arg name="mileage_pub_topic" default= "/mileage_travelled"/>
+ <arg name="angle_diff_threshold" default= "$(eval 3.1415926/6.0)"/>
+  <arg name="consecutive_failure_threshold" default= "100"/>
+
+
+
+  <node pkg="follow_waypoints" type="follow_waypoints" name="follow_waypoints" output="screen" clear_params="true">
+    <param name="goal_frame_id" value="map"/>
+    <param name="addpose_topic" value="$(arg addpose_topic)"/>
+    <param name="posearray_topic" value="$(arg posearray_topic)"/>
+    <param name="smooth_tolerance" value="$(arg smooth_tolerance)"/>
+    <param name="deviation_tolerance" value="$(arg deviation_tolerance)"/>
+    <param name="angle_diff_threshold" value="$(arg angle_diff_threshold)"/>
+    <param name="odom_topic" value="$(arg odom_topic)"/>
+    <param name="mileage_pub_topic" value="$(arg mileage_pub_topic)"/>
+    <param name="consecutive_failure_threshold" value="$(arg consecutive_failure_threshold)"/>
+
+  </node>
+
+  <node pkg="follow_waypoints" type="mileage_tracker.py" name="mileage_tracker" output="screen" clear_params="true">
+     <param name="odom_topic" value="$(arg odom_topic)"/>
+     <param name="mileage_pub_topic" value="$(arg mileage_pub_topic)"/>
+  </node>
+
+</launch>
+

@@ -1,0 +1,41 @@
+obstacle_range: 3.0
+raytrace_range: 3.5
+
+footprint: [[-0.105, -0.105], [-0.105, 0.105], [0.041, 0.105], [0.041, -0.105]]
+#robot_radius: 0.105
+
+inflation_radius: 1.0
+cost_scaling_factor: 3.0
+
+map_type: costmap
+observation_sources: scan
+scan: {sensor_frame: base_scan, data_type: LaserScan, topic: scan, marking: true, clearing: true}
+
+static_layer:
+ enabled:              true
+ map_topic:            "/map"
+
+obstacle_layer:
+ enabled: true
+ max_obstacle_height: 0.9
+ min_obstacle_height: 0.0
+ obstacle_range: 4.0
+ raytrace_range: 5.0
+ inflation_radius: 0.6    #0.25
+ combination_method: 1
+ observation_sources: laser_scan_sensor
+ track_unknown_space: true
+ laser_scan_sensor: {data_type: LaserScan, topic: scan, marking: true, clearing: true, expected_update_rate: 0}
+
+inflation_layer:
+ enabled:              true
+ cost_scaling_factor:  5.0  # 10.0 exponential rate at which the obstacle cost drops off (default: 10)
+ inflation_radius:     0.6   #0.25 # max. distance from an obstacle at which costs are incurred for planning paths.
+
+range_sensor_layer:
+ clear_threshold:    0.46
+ mark_threshold:     0.98
+ clear_on_max_reading: true
+ no_readings_timeout: 2.0
+ #topics: ['/sonar_front_1','/sonar_front_2','/sonar_front_3','/sonar_front_4','/sonar_front_5','/sonar_rear_1','/sonar_rear_2','/sonar_left_1','/sonar_left_2','/sonar_right_1','/sonar_right_2','/sonar_rear_ground']
+ topics: ["sonar_front_1"]

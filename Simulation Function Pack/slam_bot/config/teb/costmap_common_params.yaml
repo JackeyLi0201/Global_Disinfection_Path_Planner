@@ -1,0 +1,40 @@
+robot_radius: 0.20
+
+obstacle_layer:
+ enabled: true
+ max_obstacle_height: 0.6
+ min_obstacle_height: 0.0
+ obstacle_range: 2.0
+ raytrace_range: 5.0
+ inflation_radius: 0.2
+ combination_method: 1
+ observation_sources: laser_scan_sensor
+ track_unknown_space: true
+ laser_scan_sensor: {data_type: LaserScan, topic: /scan, marking: true, clearing: true, expected_update_rate: 0}
+
+track_unknown_space: true
+
+inflation_layer:
+  enabled:              true
+  cost_scaling_factor: 10.0 
+# 10.0 exponential rate at which the obstacle cost drops off (default: 10)
+  inflation_radius:     0.2 # 0.25 max. distance from an obstacle at which costs are incurred for planning paths.
+
+static_layer:
+  enabled:              true
+  map_topic:            "/map"
+
+#range_sensor_layer:
+# clear_threshold:    0.46
+# mark_threshold:     0.98
+# clear_on_max_reading: true
+# no_readings_timeout: 2.0
+# topics: ["/sensor/sonar_front"]
+ 
+pointcloud_layer: #Nube de puntos
+ enabled: true
+ obstacle_range: 2.0
+ raytrace_range: 4.0
+ inflation_radius: 0.2
+ observation_sources: pointcloud
+ pointcloud: {data_type: PointCloud2, topic: /camera/depth_registered/points, marking: true, clearing: true, obstacle_range: 3.0, raytrace_range: 3.0, max_obstacle_height: 3.0, min_obstacle_height: 0.4, expected_update_rate: 3} 
